@@ -1,0 +1,77 @@
+#include <stdio.h>
+
+int main()
+{
+    int n, e;
+    int trans[20][20] = {0};
+    int closure[20][20] = {0};
+    int i, j, k, from, to, changed;
+
+    printf("Enter number of states: ");
+    scanf("%d", &n);
+
+    printf("Enter number of epsilon transitions: ");
+    scanf("%d", &e);
+
+    printf("Enter transitions (from to):\n");
+
+    for (i = 0; i < e; i++)
+    {
+        scanf("%d %d", &from, &to);
+        trans[from][to] = 1;
+    }
+
+    /* Initialize epsilon closure */
+    for (i = 0; i < n; i++)
+    {
+        closure[i][i] = 1;
+
+        for (j = 0; j < n; j++)
+        {
+            if (trans[i][j])
+                closure[i][j] = 1;
+        }
+    }
+
+    /* Find transitive epsilon closure */
+    do
+    {
+        changed = 0;
+
+        for (i = 0; i < n; i++)
+        {
+            for (j = 0; j < n; j++)
+            {
+                if (closure[i][j])
+                {
+                    for (k = 0; k < n; k++)
+                    {
+                        if (trans[j][k] && !closure[i][k])
+                        {
+                            closure[i][k] = 1;
+                            changed = 1;
+                        }
+                    }
+                }
+            }
+        }
+    } while (changed);
+
+    /* Display epsilon closure */
+    printf("\nEpsilon Closure of states:\n");
+
+    for (i = 0; i < n; i++)
+    {
+        printf("E-closure(q%d) = { ", i);
+
+        for (j = 0; j < n; j++)
+        {
+            if (closure[i][j])
+                printf("q%d ", j);
+        }
+
+        printf("}\n");
+    }
+
+    return 0;
+}
